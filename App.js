@@ -282,7 +282,7 @@ const VirtualList = () => {
     smaps = {width: SCREEN_WIDTH/2, height: SCREEN_HEIGHT}
 
   }
-  var mymap=<MapView ref={mapref} style={smaps} >
+  var mymap=<MapView ref={mapref} style={smaps} provider="google" zoomEnabled={false} rotateEnabled={false} scrollEnabled={false} moveOnMarkerPress={false} zoomTapEnabled={false} zoomControlEnabled={false} scrollDuringRotateOrZoomEnabled={false} pitchEnabled={false} toolbarEnabled={false} >
               {markers} 
             </MapView >
 
