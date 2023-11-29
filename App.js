@@ -328,11 +328,11 @@ const VirtualList = () => {
       <View>
         <View style={styles.rowblock}>
           <View style={styles.buttonContainer}>
-            <Button title="+" onPress={() => plusButton()} />
-            <Button title="-" onPress={() => minusButton()} />
+            // <Button title="+" onPress={() => plusButton()} />
+            // <Button title="-" onPress={() => minusButton()} />
             <Button title="Load" onPress={() => loadButton()} />
             <Button title="Save" onPress={() => saveButton()} />
-            <Button title="+ My Location" onPress={() => plusMyLocationButton()} />
+            // <Button title="+ My Location" onPress={() => plusMyLocationButton()} />
           </View>
         </View>
           <VirtualizedList 
