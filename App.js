@@ -96,6 +96,10 @@ async function loadList(aurl,alist,asetlist,asetmarkers) {
       coordinate={{latitude: item.latitude, longitude: item.longitude}}
       title={item.key}
       description={"Place"}
+      onPress={(event) => {
+      const markerId = event.nativeEvent.id;
+      console.log('Another marker clicked', markerId)
+    }}
     />;
 
     return newMarker;
