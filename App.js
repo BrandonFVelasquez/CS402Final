@@ -356,8 +356,8 @@ var alist = (
             <Button title="Load" onPress={() => loadButton()} />
             <Button title="Save" onPress={() => saveButton()} />
           </View>
-        <Text>Click Counter: {clickCount}</Text>
         </View>
+          <Text>Click Count: {clickCount}</Text>
           <VirtualizedList 
             style={styles.list}
             data={[]} 
