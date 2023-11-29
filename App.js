@@ -13,7 +13,6 @@ import {Marker} from 'react-native-maps';
 import DialogInput from 'react-native-dialog-input';
 import Geocoder from 'react-native-geocoding';
 import * as Location from 'expo-location';
-
 // create a style sheet for handling visual appearances, spacing, widths, and colors
 const styles = StyleSheet.create({
   container: {
@@ -22,7 +21,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingTop: 50,
   },
-
   bcontainer: {
     flexDirection: "row",
     flex: 1,
@@ -31,7 +29,6 @@ const styles = StyleSheet.create({
     paddingTop: 50,
     width: '100%'
   },
-
   list: {
     flex: 20,
     paddingTop: 2,
@@ -45,7 +42,6 @@ const styles = StyleSheet.create({
     padding: 5,
     borderWidth: 5,
   },
-
   buttonContainer: {
     flex: 1,
     width: '100%',
@@ -61,18 +57,15 @@ const styles = StyleSheet.create({
     fontSize: 12,
     height: 44,
   },
-
   title: {
     fontSize: 22,
   },
 });
-
 const Item = ({ item, onPress, backgroundColor, textColor }) => (
   <TouchableOpacity onPress={onPress} style={[styles.item, backgroundColor]}>
     <Text style={[styles.title, textColor]}>{item.key}</Text>
   </TouchableOpacity>
 );
-
 //adds items from a json file to alist given: 
   //aurl (the url of the json file to load from)
   //alist (the list to add to)
@@ -104,12 +97,10 @@ async function loadList(aurl,alist,asetlist,asetmarkers) {
 
     return newMarker;
   });
-
   //sets the newList and newMarkerList
   asetlist(newList);
   asetmarkers(newMarkerList);
 }
-
 //saves alist as a json at aurl given:
   //aurl (the url for the json to be saved to)
   //alist (the list to be saved)
@@ -119,10 +110,8 @@ async function saveList(aurl, alist) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(alist)
     };
-
     await fetch(aurl, requestOptions);
 }
-
 //adds the user's current location to the list and marker list given:
   //asetlist (setter for the list [not given])
   //asetmarkers (setter for the markers list [not given])
@@ -132,16 +121,13 @@ async function addMyLocation(alist, amarkerlist, asetlist, asetmarkers) {
   if (status !== 'granted') {
     asetlist( 'Permission to access location was denied');
   }
-
   let location = await Location.getCurrentPositionAsync({});
-
   var newList = [{
     key: "My Position", 
     selected: false, 
     latitude: location.coords.latitude,
     longitude: location.coords.longitude
   }];
-
   var newMarkerList = [<Marker
     coordinate={{latitude: location.coords.latitude,
     longitude: location.coords.longitude}}
@@ -151,17 +137,13 @@ async function addMyLocation(alist, amarkerlist, asetlist, asetmarkers) {
   
   newList = newList.concat(alist);
   newMarkerList = newMarkerList.concat(amarkerlist);
-
   asetlist(newList);
   asetmarkers(newMarkerList);
 }
-
 //data to populate the map before adding geocoder
 //const someList = [{key: "boise", selected: false, latitude: 43.618881, longitude: -116.215019}];
 //const someMarker = [<Marker coordinate={{latitude: 43.618881,longitude: -116.215019}} title={"boise"} description={"city"} />];
-
 Geocoder.init("AIzaSyDqW8jK0xxnIRKTKXACxIK-q3UerQTiCsA");
-
 //the guts - has all the buttons and displays the list as a virtualized list
 //and functionality for each of the buttons and list
 const VirtualList = () => {
@@ -169,13 +151,11 @@ const VirtualList = () => {
   const [showAddMenu,setAddMenu] = useState(false);
   const [markers, setmarkers] = useState([]);
   
-
   //loads the list from a json url at start up
   useEffect(() => {
     var urladdress = "https://cs.boisestate.edu/~scutchin/cs402/codesnips/loadjson.php?user=tannerco";
     loadList(urladdress, list, setlist, setmarkers);
   }, []);
-
   //taggles the clicked item's 'selected' attribute
   function toggleList(aindex) {
     const newList = list.map((item, index) => {
@@ -190,22 +170,17 @@ const VirtualList = () => {
       else {
         item.selected = false;
       }
-
       return item;
     });
-
     setlist(newList);
   }
-
   //displays the add location DialogInput box when the '+' button is pressed
   function plusButton() {
     setAddMenu(true);
   }
-
   function plusMyLocationButton() {
     addMyLocation(list, markers, setlist, setmarkers);
   }
-
   //adds a location to the list based on the first result returned by Geocoder given alocation
   function addLocation(alocation) {  
     var location = {};
@@ -220,16 +195,13 @@ const VirtualList = () => {
         title={alocation}
         description={"Place"}
       />
-
       newList = newList.concat(list);
       var marklist = markers.concat(amark);
-
       setlist(newList);
       setmarkers(marklist);
     })
     .catch(error => console.warn(error));
   }
-
   //removes all selected items from the list when the '-' button is pressed
   function minusButton() {
     const newList = list.filter((item) => item.selected == false);
@@ -239,27 +211,21 @@ const VirtualList = () => {
         title={item.key}
         description={"Place"}
       />;
-
       return newMarker;
     });
-
     setlist(newList);
     setmarkers(newMarkerList);
   }
-
   //adds the items from the json ruturned by the php url to the list when the 'load' button is pressed
   function loadButton() {
       var urladdress = "https://cs.boisestate.edu/~scutchin/cs402/codesnips/loadjson.php?user=tannerco"
       loadList(urladdress, list, setlist, setmarkers);
   }
-
   //saves the items from the list as a json file using the php url when the 'save' button is pressed
   function saveButton() {
       var urladdress = "https://cs.boisestate.edu/~scutchin/cs402/codesnips/savejson.php?user=tannerco"
       saveList(urladdress,list)
-
   }
-
   //used by the virtual list to render the list items
   const renderItem = ({ item, index }) => {
     const backgroundColor = item.selected ? 'black' : 'white';
@@ -276,86 +242,129 @@ const VirtualList = () => {
       />
     );
   };
-  
-   const mapref = React.createRef();
-  const SCREEN_WIDTH = useWindowDimensions().width;
-  const SCREEN_HEIGHT = useWindowDimensions().height;
-  var smaps = { width: SCREEN_WIDTH, height: SCREEN_HEIGHT / 2 };
-  if (SCREEN_WIDTH > SCREEN_HEIGHT) {
-    smaps = { width: SCREEN_WIDTH / 2, height: SCREEN_HEIGHT };
-  }
-  var mymap = (
-    <MapView
-      ref={mapref}
-      style={smaps}
-      provider="google"
-      zoomEnabled={false}
-      rotateEnabled={false}
-      scrollEnabled={false}
-      moveOnMarkerPress={false}
-      zoomTapEnabled={false}
-      zoomControlEnabled={false}
-      scrollDuringRotateOrZoomEnabled={false}
-      pitchEnabled={false}
-      toolbarEnabled={false}
+
+    const navigateToLocation = async (locationName) => {
+    try {
+      const response = await Geocoder.from(locationName);
+      const { lat, lng } = response.results[0].geometry.location;
+      mapref.current.animateToRegion({
+        latitude: lat,
+        longitude: lng,
+        latitudeDelta: 0.1,
+        longitudeDelta: 0.1,
+      });
+    } catch (error) {
+      console.warn('Error navigating to location:', error);
+    }
+  };
+
+  const levels = [
+  { name: 'Level 1', location: 'Boise' },
+  { name: 'Level 2', location: 'Germany' },
+  { name: 'Level 3', location: 'France' },
+];
+
+const mapref = React.createRef();
+const SCREEN_WIDTH = useWindowDimensions().width;
+const SCREEN_HEIGHT = useWindowDimensions().height;
+var smaps = { width: SCREEN_WIDTH, height: SCREEN_HEIGHT / 2 };
+if (SCREEN_WIDTH > SCREEN_HEIGHT) {
+  smaps = { width: SCREEN_WIDTH / 2, height: SCREEN_HEIGHT };
+}
+
+var mymap = (
+  <MapView
+    ref={mapref}
+    style={smaps}
+    provider="google"
+    zoomEnabled={false}
+    rotateEnabled={false}
+    scrollEnabled={false}
+    moveOnMarkerPress={false}
+    zoomTapEnabled={false}
+    zoomControlEnabled={false}
+    scrollDuringRotateOrZoomEnabled={false}
+    pitchEnabled={false}
+    toolbarEnabled={false}
+  >
+    {markers}
+  </MapView>
+);
+
+//the content to be displayed on the screen when the screen is in portrait mode
+var alist = (
+ <View style={styles.container}>
+      {mymap}
+      <View style={styles.rowblock}>
+        <View style={styles.buttonContainer}>
+          {levels.map((level, index) => (
+            <Button
+              key={index}
+              title={level.name}
+              onPress={() => navigateToLocation(level.location)}
+            />
+          ))}
+        <Button title="Load" onPress={() => loadButton()} />
+        <Button title="Save" onPress={() => saveButton()} />
+      </View>
+    </View>
+    <VirtualizedList
+      style={styles.list}
+      data={[]}
+      renderItem={renderItem}
+      keyExtractor={(item, index) => index.toString()}
+      getItemCount={(data) => list.length}
+      getItem={(data, index) => list[index]}
+    />
+    <DialogInput
+      isDialogVisible={showAddMenu}
+      title="Enter Address"
+      message="Enter The Address To Add"
+      submitInput={(inputText) => {
+        setAddMenu(false);
+        addLocation(inputText);
+      }}
+      closeDialog={() => {
+        setAddMenu(false);
+      }}
     >
-      {markers}
-    </MapView>
-  );
-
-  // Render buttons based on screen orientation
-  const buttons = SCREEN_WIDTH > SCREEN_HEIGHT ? (
-    <View style={styles.rowblock}>
-      <View style={styles.buttonContainer}>
-        <Button title="Load" onPress={() => loadButton()} />
-        <Button title="Save" onPress={() => saveButton()} />
-      </View>
-    </View>
-  ) : (
-    <View style={styles.rowblock}>
-      <View style={styles.buttonContainer}>
-        <Button title="+" onPress={() => plusButton()} />
-        <Button title="-" onPress={() => minusButton()} />
-        <Button title="Load" onPress={() => loadButton()} />
-        <Button title="Save" onPress={() => saveButton()} />
-        <Button title="+ My Location" onPress={() => plusMyLocationButton()} />
-      </View>
-    </View>
-  );
-
-  // Determine the layout based on screen orientation
-  return SCREEN_WIDTH > SCREEN_HEIGHT ? (
+      <Text>Something</Text>
+    </DialogInput>
+  </View>
+);
+  //the content to be displayed on the screen when the screen is in landscape mode
+  var blist = (
     <View style={styles.bcontainer}>
-      <View>{buttons}</View>
+      <View>
+        <View style={styles.rowblock}>
+          <View style={styles.buttonContainer}>
+            <Button title="+" onPress={() => plusButton()} />
+            <Button title="-" onPress={() => minusButton()} />
+            <Button title="Load" onPress={() => loadButton()} />
+            <Button title="Save" onPress={() => saveButton()} />
+          </View>
+        </View>
+          <VirtualizedList 
+            style={styles.list}
+            data={[]} 
+            renderItem={renderItem}
+            keyExtractor={(item,index) => index} 
+            getItemCount={(data) => list.length} 
+            getItem={(data, index) => {return list[index]}} 
+          />
+          <DialogInput isDialogVisible={showAddMenu} 
+            title="Enter Address"
+            message="Enter The Address To Add"
+            submitInput={ (inputText) => {setAddMenu(false); addLocation(inputText)}}
+            closeDialog={() => {setAddMenu(false)}}
+          >
+          <Text>Something</Text>
+          </DialogInput>
+        </View>
       {mymap}
-    </View>
-  ) : (
-    <View style={styles.container}>
-      {mymap}
-      <VirtualizedList
-        style={styles.list}
-        data={[]}
-        renderItem={renderItem}
-        keyExtractor={(item, index) => index.toString()}
-        getItemCount={(data) => list.length}
-        getItem={(data, index) => list[index]}
-      />
-      <DialogInput
-        isDialogVisible={showAddMenu}
-        title="Enter Address"
-        message="Enter The Address To Add"
-        submitInput={(inputText) => {
-          setAddMenu(false);
-          addLocation(inputText);
-        }}
-        closeDialog={() => {
-          setAddMenu(false);
-        }}
-      >
-        <Text>Something</Text>
-      </DialogInput>
     </View>
   );
+  //determines the layout base on if the screen is in landscape or portrait mode
+  return SCREEN_WIDTH > SCREEN_HEIGHT ? blist : alist;
 };
-
 export default VirtualList;
