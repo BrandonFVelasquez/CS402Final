@@ -155,6 +155,7 @@ const VirtualList = () => {
   const [list, setlist] = useState([]);
   const [showAddMenu,setAddMenu] = useState(false);
   const [markers, setmarkers] = useState([]);
+  const [clickCount, setClickCount] = useState(0);
   
   //loads the list from a json url at start up
   useEffect(() => {
@@ -162,6 +163,12 @@ const VirtualList = () => {
     loadList(urladdress, list, setlist, setmarkers);
     lockOrientation();
   }, []);
+  
+  const handleButtonClick = () => {
+    setClickCount(clickCount + 1);
+    //We may need to add more logic for the clicker
+  };
+  
   //taggles the clicked item's 'selected' attribute
   function toggleList(aindex) {
     const newList = list.map((item, index) => {
@@ -349,6 +356,7 @@ var alist = (
             <Button title="Load" onPress={() => loadButton()} />
             <Button title="Save" onPress={() => saveButton()} />
           </View>
+        <Text>Click Counter: {clickCount}</Text>
         </View>
           <VirtualizedList 
             style={styles.list}
