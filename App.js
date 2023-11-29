@@ -277,87 +277,85 @@ const VirtualList = () => {
     );
   };
   
-  const mapref = React.createRef();
+   const mapref = React.createRef();
   const SCREEN_WIDTH = useWindowDimensions().width;
   const SCREEN_HEIGHT = useWindowDimensions().height;
-  var smaps = {width: SCREEN_WIDTH, height: SCREEN_HEIGHT/2}
-  if (SCREEN_WIDTH > SCREEN_HEIGHT)
-  {
-    smaps = {width: SCREEN_WIDTH/2, height: SCREEN_HEIGHT}
-
+  var smaps = { width: SCREEN_WIDTH, height: SCREEN_HEIGHT / 2 };
+  if (SCREEN_WIDTH > SCREEN_HEIGHT) {
+    smaps = { width: SCREEN_WIDTH / 2, height: SCREEN_HEIGHT };
   }
-  var mymap=<MapView ref={mapref} style={smaps} provider="google" zoomEnabled={false} rotateEnabled={false} scrollEnabled={false} moveOnMarkerPress={false} zoomTapEnabled={false} zoomControlEnabled={false} scrollDuringRotateOrZoomEnabled={false} pitchEnabled={false} toolbarEnabled={false} >
-              {markers} 
-            </MapView >
+  var mymap = (
+    <MapView
+      ref={mapref}
+      style={smaps}
+      provider="google"
+      zoomEnabled={false}
+      rotateEnabled={false}
+      scrollEnabled={false}
+      moveOnMarkerPress={false}
+      zoomTapEnabled={false}
+      zoomControlEnabled={false}
+      scrollDuringRotateOrZoomEnabled={false}
+      pitchEnabled={false}
+      toolbarEnabled={false}
+    >
+      {markers}
+    </MapView>
+  );
 
-  //the content to be displayed on the screen when the screen is in portrait mode
-  var alist = (
-    <View style={styles.container}>
-    {mymap}
-      <View style={styles.rowblock}>
-        <View style={styles.buttonContainer}>
-          <Button title="+" onPress={() => plusButton()} />
-          <Button title="-" onPress={() => minusButton()} />
-          <Button title="Load" onPress={() => loadButton()} />
-          <Button title="Save" onPress={() => saveButton()} />
-          <Button title="+ My Location" onPress={() => plusMyLocationButton()} />
-        </View>
+  // Render buttons based on screen orientation
+  const buttons = SCREEN_WIDTH > SCREEN_HEIGHT ? (
+    <View style={styles.rowblock}>
+      <View style={styles.buttonContainer}>
+        <Button title="Load" onPress={() => loadButton()} />
+        <Button title="Save" onPress={() => saveButton()} />
       </View>
-        <VirtualizedList 
-          style={styles.list}
-          data={[]} 
-          renderItem={renderItem}
-          keyExtractor={(item,index) => index} 
-          getItemCount={(data) => list.length} 
-          getItem={(data, index) => {return list[index]}} 
-        />
-        <DialogInput isDialogVisible={showAddMenu} 
-            title="Enter Address"
-            message="Enter The Address To Add"
-            submitInput={ (inputText) => {setAddMenu(false); addLocation(inputText)}}
-            closeDialog={() => {setAddMenu(false)}}
-          >
-          <Text>Something</Text>
-        </DialogInput>
+    </View>
+  ) : (
+    <View style={styles.rowblock}>
+      <View style={styles.buttonContainer}>
+        <Button title="+" onPress={() => plusButton()} />
+        <Button title="-" onPress={() => minusButton()} />
+        <Button title="Load" onPress={() => loadButton()} />
+        <Button title="Save" onPress={() => saveButton()} />
+        <Button title="+ My Location" onPress={() => plusMyLocationButton()} />
+      </View>
     </View>
   );
 
-  //the content to be displayed on the screen when the screen is in landscape mode
-  var blist = (
+  // Determine the layout based on screen orientation
+  return SCREEN_WIDTH > SCREEN_HEIGHT ? (
     <View style={styles.bcontainer}>
-      <View>
-        <View style={styles.rowblock}>
-          <View style={styles.buttonContainer}>
-            // <Button title="+" onPress={() => plusButton()} />
-            // <Button title="-" onPress={() => minusButton()} />
-            <Button title="Load" onPress={() => loadButton()} />
-            <Button title="Save" onPress={() => saveButton()} />
-            // <Button title="+ My Location" onPress={() => plusMyLocationButton()} />
-          </View>
-        </View>
-          <VirtualizedList 
-            style={styles.list}
-            data={[]} 
-            renderItem={renderItem}
-            keyExtractor={(item,index) => index} 
-            getItemCount={(data) => list.length} 
-            getItem={(data, index) => {return list[index]}} 
-          />
-          <DialogInput isDialogVisible={showAddMenu} 
-            title="Enter Address"
-            message="Enter The Address To Add"
-            submitInput={ (inputText) => {setAddMenu(false); addLocation(inputText)}}
-            closeDialog={() => {setAddMenu(false)}}
-          >
-          <Text>Something</Text>
-          </DialogInput>
-        </View>
+      <View>{buttons}</View>
       {mymap}
     </View>
+  ) : (
+    <View style={styles.container}>
+      {mymap}
+      <VirtualizedList
+        style={styles.list}
+        data={[]}
+        renderItem={renderItem}
+        keyExtractor={(item, index) => index.toString()}
+        getItemCount={(data) => list.length}
+        getItem={(data, index) => list[index]}
+      />
+      <DialogInput
+        isDialogVisible={showAddMenu}
+        title="Enter Address"
+        message="Enter The Address To Add"
+        submitInput={(inputText) => {
+          setAddMenu(false);
+          addLocation(inputText);
+        }}
+        closeDialog={() => {
+          setAddMenu(false);
+        }}
+      >
+        <Text>Something</Text>
+      </DialogInput>
+    </View>
   );
-
-  //determines the layout base on if the screen is in landscape or portrait mode
-  return SCREEN_WIDTH > SCREEN_HEIGHT ? blist : alist;
 };
 
 export default VirtualList;
