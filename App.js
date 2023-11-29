@@ -268,9 +268,9 @@ const mapref = React.createRef();
 const SCREEN_WIDTH = useWindowDimensions().width;
 const SCREEN_HEIGHT = useWindowDimensions().height;
 var smaps = { width: SCREEN_WIDTH, height: SCREEN_HEIGHT / 2 };
-if (SCREEN_WIDTH > SCREEN_HEIGHT) {
-  smaps = { width: SCREEN_WIDTH / 2, height: SCREEN_HEIGHT };
-}
+// if (SCREEN_WIDTH > SCREEN_HEIGHT) {
+//   smaps = { width: SCREEN_WIDTH / 2, height: SCREEN_HEIGHT };
+// }
 
 var mymap = (
   <MapView
@@ -365,6 +365,6 @@ var alist = (
     </View>
   );
   //determines the layout base on if the screen is in landscape or portrait mode
-  return SCREEN_WIDTH > SCREEN_HEIGHT ? blist : alist;
+  return alist;
 };
 export default VirtualList;
