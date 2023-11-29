@@ -13,6 +13,7 @@ import {Marker} from 'react-native-maps';
 import DialogInput from 'react-native-dialog-input';
 import Geocoder from 'react-native-geocoding';
 import * as Location from 'expo-location';
+import * as ScreenOrientation from 'expo-screen-orientation';
 // create a style sheet for handling visual appearances, spacing, widths, and colors
 const styles = StyleSheet.create({
   container: {
@@ -146,22 +147,21 @@ async function addMyLocation(alist, amarkerlist, asetlist, asetmarkers) {
 Geocoder.init("AIzaSyDqW8jK0xxnIRKTKXACxIK-q3UerQTiCsA");
 //the guts - has all the buttons and displays the list as a virtualized list
 //and functionality for each of the buttons and list
+async function lockOrientation() {
+  await ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT_UP);
+}
+
 const VirtualList = () => {
   const [list, setlist] = useState([]);
   const [showAddMenu,setAddMenu] = useState(false);
   const [markers, setmarkers] = useState([]);
-  const [clickCount, setClickCount] = useState(0);
   
   //loads the list from a json url at start up
   useEffect(() => {
     var urladdress = "https://cs.boisestate.edu/~scutchin/cs402/codesnips/loadjson.php?user=tannerco";
     loadList(urladdress, list, setlist, setmarkers);
+    lockOrientation();
   }, []);
-  const handleButtonClick = () => {
-    setClickCount(clickCount + 1);
-    //We may need to add more logic for the clicker
-  };
-  
   //taggles the clicked item's 'selected' attribute
   function toggleList(aindex) {
     const newList = list.map((item, index) => {
@@ -349,7 +349,6 @@ var alist = (
             <Button title="Load" onPress={() => loadButton()} />
             <Button title="Save" onPress={() => saveButton()} />
           </View>
-        <Text>Click Counter: {clickCount}</Text
         </View>
           <VirtualizedList 
             style={styles.list}
