@@ -92,7 +92,9 @@ async function loadList(aurl,alist,asetlist,asetmarkers) {
       description={"Place"}
       onPress={(event) => {
       const markerId = event.nativeEvent.id;
-      console.log('Another marker clicked', markerId)
+      console.log('Another marker clicked', markerId);
+      //adding functionality to remove marker when clicked
+      removeMarker(item, alist, asetmarkers);
     }}
     />;
 
@@ -101,7 +103,17 @@ async function loadList(aurl,alist,asetlist,asetmarkers) {
   //sets the newList and newMarkerList
   asetlist(newList);
   asetmarkers(newMarkerList);
+
 }
+
+//removes marker when the marker is pressed
+function removeMarker(theMarkerToRemove, markerList, markerSetter){
+  console.log("Marker being removed...\n");
+  const filteredMarkers = markerList.filter(marker => marker.key !== theMarkerToRemove.key);
+  markerSetter(filteredMarkers);
+  console.log("Marker has been elimated!\n")
+}
+
 //saves alist as a json at aurl given:
   //aurl (the url for the json to be saved to)
   //alist (the list to be saved)
@@ -346,38 +358,38 @@ var alist = (
     </DialogInput>
   </View>
 );
-  //the content to be displayed on the screen when the screen is in landscape mode
-  var blist = (
-    <View style={styles.bcontainer}>
-      <View>
-        <View style={styles.rowblock}>
-          <View style={styles.buttonContainer}>
-            <Button title="+" onPress={() => plusButton()} />
-            <Button title="-" onPress={() => minusButton()} />
-            <Button title="Load" onPress={() => loadButton()} />
-            <Button title="Save" onPress={() => saveButton()} />
-          </View>
-        </View>
-          <VirtualizedList 
-            style={styles.list}
-            data={[]} 
-            renderItem={renderItem}
-            keyExtractor={(item,index) => index} 
-            getItemCount={(data) => list.length} 
-            getItem={(data, index) => {return list[index]}} 
-          />
-          <DialogInput isDialogVisible={showAddMenu} 
-            title="Enter Address"
-            message="Enter The Address To Add"
-            submitInput={ (inputText) => {setAddMenu(false); addLocation(inputText)}}
-            closeDialog={() => {setAddMenu(false)}}
-          >
-          <Text>Something</Text>
-          </DialogInput>
-        </View>
-      {mymap}
-    </View>
-  );
+  // //the content to be displayed on the screen when the screen is in landscape mode
+  // var blist = (
+  //   <View style={styles.bcontainer}>
+  //     <View>
+  //       <View style={styles.rowblock}>
+  //         <View style={styles.buttonContainer}>
+  //           <Button title="+" onPress={() => plusButton()} />
+  //           <Button title="-" onPress={() => minusButton()} />
+  //           <Button title="Load" onPress={() => loadButton()} />
+  //           <Button title="Save" onPress={() => saveButton()} />
+  //         </View>
+  //       </View>
+  //         <VirtualizedList 
+  //           style={styles.list}
+  //           data={[]} 
+  //           renderItem={renderItem}
+  //           keyExtractor={(item,index) => index} 
+  //           getItemCount={(data) => list.length} 
+  //           getItem={(data, index) => {return list[index]}} 
+  //         />
+  //         <DialogInput isDialogVisible={showAddMenu} 
+  //           title="Enter Address"
+  //           message="Enter The Address To Add"
+  //           submitInput={ (inputText) => {setAddMenu(false); addLocation(inputText)}}
+  //           closeDialog={() => {setAddMenu(false)}}
+  //         >
+  //         <Text>Something</Text>
+  //         </DialogInput>
+  //       </View>
+  //     {mymap}
+  //   </View>
+  // );
   //determines the layout base on if the screen is in landscape or portrait mode
   return alist;
 };
