@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef} from 'react';
 import {
   VirtualizedList,
   TouchableOpacity,
@@ -163,18 +163,53 @@ async function lockOrientation() {
   await ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT_UP);
 }
 
+var markSpawnSpeed = 5000;
+
 const VirtualList = () => {
   const [list, setlist] = useState([]);
   const [showAddMenu,setAddMenu] = useState(false);
   const [markers, setmarkers] = useState([]);
   const [clickCount, setClickCount] = useState(0);
+  const [levelPos, setLevelPos] = useState({lat: 0.0, long: 0.0});
+  const timeoutRef = useRef(null);
   
   //loads the list from a json url at start up
   useEffect(() => {
-    var urladdress = "https://cs.boisestate.edu/~scutchin/cs402/codesnips/loadjson.php?user=tannerco";
-    loadList(urladdress, list, setlist, setmarkers);
+    // var urladdress = "https://cs.boisestate.edu/~scutchin/cs402/codesnips/loadjson.php?user=tannerco";
+    // loadList(urladdress, list, setlist, setmarkers);
     lockOrientation();
-  }, []);
+    timeoutRef.current = setTimeout(gmark, markSpawnSpeed);
+    return () => {clearTimeout(timeoutRef.current); console.log("reset");} 
+  }, [levelPos, markers]);
+
+  function generateMarker(lat, long) {
+    markLat = Math.random()*0.08 + lat - 0.05;
+    markLong = Math.random()*0.08 + long - 0.05;
+    let newMarkerList = [
+      <Marker
+        coordinate={{latitude: markLat, longitude: markLong}}
+        description={"Place"}
+        key={Math.random}
+        onPress={(event) => {
+          const markerId = event.nativeEvent.id;
+          removeMarker(this.key, markers, setmarkers);
+        }}
+      />
+    ]
+    newMarkerList = newMarkerList.concat(markers);
+    setTheMarkers(newMarkerList);
+    //setmarkers(newMarkerList);
+    console.log(timeoutRef.current + ", " + lat + ", " + long);
+  }
+
+  function gmark() {
+    generateMarker(levelPos.lat, levelPos.long);
+    console.log(levelPos.lat);
+  }
+
+  function setTheMarkers(mList) {
+    setmarkers(mList);
+  }
   
   const handleButtonClick = () => {
     setClickCount(clickCount + 1);
@@ -278,6 +313,7 @@ const VirtualList = () => {
         latitudeDelta: 0.1,
         longitudeDelta: 0.1,
       });
+      setLevelPos({lat: lat, long: lng});
     } catch (error) {
       console.warn('Error navigating to location:', error);
     }
