@@ -6,7 +6,6 @@ import {
   StyleSheet,
   Text,
   View,
-  Platform,
   useWindowDimensions,
 } from 'react-native';
 import MapView from 'react-native-maps';
@@ -167,8 +166,8 @@ const VirtualList = () => {
       const response = await Geocoder.from(locationName);
       const { lat, lng } = response.results[0].geometry.location;
       mapref.current.animateToRegion({
-        latitude: Platform.OS === "ios" ? lat + 0.05 : lat,
-        longitude: Platform.OS === "ios" ? lng - 0.05 : lng,
+        latitude: lat,
+        longitude: lng,
         latitudeDelta: 0.1,
         longitudeDelta: 0.1,
       });
