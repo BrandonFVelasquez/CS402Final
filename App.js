@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback} from 'react';
+import React, { useState, useEffect, useRef} from 'react';
 import {
   VirtualizedList,
   TouchableOpacity,
@@ -10,7 +10,6 @@ import {
 } from 'react-native';
 import MapView from 'react-native-maps';
 import {Marker} from 'react-native-maps';
-import Geocoder from 'react-native-geocoding';
 import * as ScreenOrientation from 'expo-screen-orientation';
 // create a style sheet for handling visual appearances, spacing, widths, and colors
 const styles = StyleSheet.create({
@@ -58,14 +57,6 @@ const Item = ({ item, onPress, backgroundColor, textColor }) => (
   </TouchableOpacity>
 );
 
-
-
-//data to populate the map before adding geocoder
-//const someList = [{key: "boise", selected: false, latitude: 43.618881, longitude: -116.215019}];
-//const someMarker = [<Marker coordinate={{latitude: 43.618881,longitude: -116.215019}} title={"boise"} description={"city"} />];
-Geocoder.init("AIzaSyDqW8jK0xxnIRKTKXACxIK-q3UerQTiCsA");
-//the guts - has all the buttons and displays the list as a virtualized list
-//and functionality for each of the buttons and list
 async function lockOrientation() {
   await ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT_UP);
 }
@@ -76,16 +67,25 @@ const VirtualList = () => {
   const [list, setlist] = useState([]);
   const [markers, setmarkers] = useState([]);
   const [clickCount, setClickCount] = useState(0);
-  const [levelPos, setLevelPos] = useState({lat: 0.0, long: 0.0});
+  const [levelPos, setLevelPos] = useState({latitude: 43.6150186, longitude: -116.2023137});
+  const [mapIsReady, setMapIsReady] = useState(false);
   const timeoutRef = useRef(null);
 
   useEffect(() => {
-    lockOrientation();
-    timeoutRef.current = setTimeout(gmark, markSpawnSpeed);
-    return () => {
-      clearTimeout(timeoutRef.current);
-    }; 
-  }, [levelPos, markers]);
+
+    if(mapIsReady) {
+      setMapIsReady(false);
+      lockOrientation();
+      navigateToLocation(levelPos);
+    }
+    else {
+      timeoutRef.current = setTimeout(gmark, markSpawnSpeed);
+      return () => {
+        clearTimeout(timeoutRef.current);
+      }; 
+    }
+
+  }, [levelPos, markers, mapIsReady, navigateToLocation]);
 
   const removeMarker = (markerKey) => {
     setmarkers((prevMarkers) => {
@@ -116,7 +116,7 @@ const VirtualList = () => {
   }
 
   function gmark() {
-    generateMarker(levelPos.lat, levelPos.long);
+    generateMarker(levelPos.latitude, levelPos.longitude);
     timeoutRef.current = setTimeout(gmark, markSpawnSpeed);
   }
   
@@ -124,25 +124,6 @@ const VirtualList = () => {
     setClickCount((previous) => (previous + 1));
     //We may need to add more logic for the clicker
   };
-  
-  //taggles the clicked item's 'selected' attribute
-  function toggleList(aindex) {
-    const newList = list.map((item, index) => {
-      if (index == aindex) {
-        if (item.selected) {
-          item.selected = false;
-        } else {
-          mapref.current.animateToRegion({latitude: item.latitude, longitude: item.longitude, latitudeDelta: 0.1, longitudeDelta: 0.1});
-          item.selected = true;
-        }
-      }
-      else {
-        item.selected = false;
-      }
-      return item;
-    });
-    setlist(newList);
-  }
 
   //used by the virtual list to render the list items
   const renderItem = ({ item, index }) => {
@@ -152,48 +133,41 @@ const VirtualList = () => {
     return (
       <Item
         item={item}
-        onPress={() => {
-          toggleList(index);
-        }}
         backgroundColor={{ backgroundColor }}
         textColor={{ color }}
       />
     );
   };
 
-    const navigateToLocation = async (locationName) => {
+    const navigateToLocation = async (location) => {
     try {
-      const response = await Geocoder.from(locationName);
-      const { lat, lng } = response.results[0].geometry.location;
       mapref.current.animateToRegion({
-        latitude: lat,
-        longitude: lng,
+        latitude: location.latitude,
+        longitude: location.longitude,
         latitudeDelta: 0.1,
         longitudeDelta: 0.1,
       });
-      setLevelPos({lat: lat, long: lng});
+      setLevelPos({latitude: location.latitude, longitude: location.longitude});   
     } catch (error) {
       console.warn('Error navigating to location:', error);
     }
   };
 
   const levels = [
-  { name: 'Level 1', location: 'Boise' },
-  { name: 'Level 2', location: 'Germany' },
-  { name: 'Level 3', location: 'France' },
+  { name: 'Level 1', location: {latitude: 43.6150186, longitude: -116.2023137} }, // Boise
+  { name: 'Level 2', location: {latitude: 51.165691, longitude: 10.451526} }, // Germany
+  { name: 'Level 3', location: {latitude: 46.227638, longitude: 2.213749} }, // France
 ];
 
 const mapref = React.createRef();
 const SCREEN_WIDTH = useWindowDimensions().width;
 const SCREEN_HEIGHT = useWindowDimensions().height;
 var smaps = { width: SCREEN_WIDTH, height: SCREEN_HEIGHT / 2 };
-// if (SCREEN_WIDTH > SCREEN_HEIGHT) {
-//   smaps = { width: SCREEN_WIDTH / 2, height: SCREEN_HEIGHT };
-// }
 
 var mymap = (
   <MapView
     ref={mapref}
+    onMapReady={() => setMapIsReady(true)}
     style={smaps}
     provider="google"
     zoomEnabled={false}
