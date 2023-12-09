@@ -61,7 +61,10 @@ async function lockOrientation() {
   await ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT_UP);
 }
 
+// vars for Spawn Speed Upgrade
+var spawnSpeedUpgradeLevel = 0;
 var markSpawnSpeed = 2000;
+var spawnSpeedUpgradeCost = "100 clicks";
 
 const VirtualList = () => {
   const [list, setlist] = useState([]);
@@ -70,6 +73,83 @@ const VirtualList = () => {
   const [levelPos, setLevelPos] = useState({latitude: 43.6150186, longitude: -116.2023137});
   const [mapIsReady, setMapIsReady] = useState(false);
   const timeoutRef = useRef(null);
+
+  //Spawn Speed Upgrade
+  function spawnSpeedUpgrade(pointsAmt){
+    switch(spawnSpeedUpgradeLevel) {
+      case 0:
+        if(spawnSpeedUpgradeLevel < 5 && pointsAmt >= 100){
+          markSpawnSpeed = 2000;
+          spawnSpeedUpgradeCost = "250 clicks";
+          spawnSpeedUpgradeLevel = spawnSpeedUpgradeLevel + 1;
+          console.log("markSpawnSpeed: ", markSpawnSpeed);
+          setClickCount(clickCount - 100);
+          return 2000;
+        }
+        else{
+          return;
+        }
+      case 1:
+        if(spawnSpeedUpgradeLevel < 5 && pointsAmt >= 250){
+          markSpawnSpeed = 1500;
+          spawnSpeedUpgradeCost = "500 clicks";
+          spawnSpeedUpgradeLevel = spawnSpeedUpgradeLevel + 1;
+          console.log("markSpawnSpeed: ", markSpawnSpeed);
+          setClickCount(clickCount - 250);
+          return 1500;
+        }
+        else{
+          return;
+        }
+      case 2:
+        if(spawnSpeedUpgradeLevel < 5 && pointsAmt >= 500){
+          markSpawnSpeed = 1000;
+          spawnSpeedUpgradeCost = "750 clicks";
+          spawnSpeedUpgradeLevel = spawnSpeedUpgradeLevel + 1;
+          console.log("markSpawnSpeed: ", markSpawnSpeed);
+          setClickCount(clickCount - 500);
+          return 1000;
+        }
+        else{
+          return;
+        }
+      case 3:
+        if(spawnSpeedUpgradeLevel < 5 && pointsAmt >= 750){
+          markSpawnSpeed = 750;
+          spawnSpeedUpgradeCost = "1000 clicks";
+          spawnSpeedUpgradeLevel = spawnSpeedUpgradeLevel + 1;
+          console.log("markSpawnSpeed: ", markSpawnSpeed);
+          setClickCount(clickCount - 750);
+          return 750;
+        }
+        else{
+          return;
+        }
+      case 4:
+        if(spawnSpeedUpgradeLevel < 5 && pointsAmt >= 1000){
+          markSpawnSpeed = 300;
+          spawnSpeedUpgradeCost = "1500 clicks";
+          spawnSpeedUpgradeLevel = spawnSpeedUpgradeLevel + 1;
+          console.log("markSpawnSpeed: ", markSpawnSpeed);
+          setClickCount(clickCount - 1000);
+          return 300;
+        }
+        else{
+          return;
+        }
+      default:
+        if(spawnSpeedUpgradeLevel < 5 && pointsAmt >= 1500){
+          markSpawnSpeed = 50;
+          spawnSpeedUpgradeCost = "Fully Upgraded";
+          console.log("markSpawnSpeed(fully): ", markSpawnSpeed);
+          setClickCount(clickCount - 1500);
+          return 50;
+        }
+        else{
+          return;
+        }
+    }
+  }
 
   useEffect(() => {
 
@@ -204,7 +284,21 @@ var alist = (
           ))}
       </View>
     </View>
-    <Text>Click Counter: {clickCount}</Text>            
+    <Text>Click Counter: {clickCount}</Text>
+
+        <View style={styles.rowblock}>
+        <View style={styles.buttonContainer}>
+           <Text>Spawn Speed Upgrade Level: {spawnSpeedUpgradeLevel}</Text>
+           <Text>                          </Text>
+           <Text> Upgrade for: {spawnSpeedUpgradeCost}</Text>
+           <Text>                          </Text>
+           <Button
+              title="UPGRADE"
+              onPress={() => spawnSpeedUpgrade(clickCount)}
+            />
+      </View>
+    </View>
+
     <VirtualizedList
       style={styles.list}
       data={[]}
