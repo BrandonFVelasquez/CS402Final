@@ -29,7 +29,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: 'black',
     borderWidth: 2.5,
-    // width: '100%',
     alignItems: 'center',
     alignContent: 'center',
     padding: 20
@@ -50,7 +49,11 @@ const styles = StyleSheet.create({
     padding: 0,
     paddingTop: 0,
   },
-   
+  upgradeContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
   item: {
     padding: 0,
     fontSize: 12,
@@ -278,8 +281,6 @@ var mymap = (
   </MapView>
 );
 
-// <Text>Click Counter: {clickCount}</Text>
-
 //the content to be displayed on the screen
 var alist = (
   
@@ -298,11 +299,10 @@ var alist = (
       </View>
     </View>
         <View style={styles.rowblock}>
-        <View style={styles.buttonContainer}>
-           <Text>Spawn Speed Upgrade Level: {spawnSpeedUpgradeLevel}</Text>
-           <Text>                          </Text>
+        <Text style={{fontWeight: 'bold'}}>SPAWN SPEED UPGRADE</Text>
+        <View style={styles.upgradeContainer}>
+           <Text> Level: {spawnSpeedUpgradeLevel}</Text>
            <Text> Upgrade for: {spawnSpeedUpgradeCost}</Text>
-           <Text>                          </Text>
            <Button
               title="UPGRADE"
               onPress={() => spawnSpeedUpgrade(clickCount)}
