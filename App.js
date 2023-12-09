@@ -154,9 +154,10 @@ const VirtualList = () => {
   };
 
   const levels = [
-  { name: 'Level 1', location: {latitude: 43.6150186, longitude: -116.2023137} }, // Boise
-  { name: 'Level 2', location: {latitude: 51.165691, longitude: 10.451526} }, // Germany
-  { name: 'Level 3', location: {latitude: 46.227638, longitude: 2.213749} }, // France
+  { name: 'Boise', location: {latitude: 43.6150186, longitude: -116.2023137} }, // Boise
+  { name: 'Berlin', location: {latitude: 52.5200, longitude: 13.4050} }, // Germany
+  { name: 'Paris', location: {latitude: 48.8566, longitude: 2.3522} }, // France
+  { name: 'Tokyo', location: {latitude: 35.6764, longitude: 139.6500} }, // Tokyo
 ];
 
 const mapref = React.createRef();
