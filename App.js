@@ -24,7 +24,16 @@ const styles = StyleSheet.create({
     paddingTop: 2,
     alignItems: 'center'
   },
-  
+  counter: {
+    fontSize: '25px',
+    fontWeight: 'bold',
+    color: 'black',
+    borderWidth: 2.5,
+    // width: '100%',
+    alignItems: 'center',
+    alignContent: 'center',
+    padding: 20
+  },
   rowblock: {
     flex: 0,
     height: 80,
@@ -64,7 +73,7 @@ async function lockOrientation() {
 // vars for Spawn Speed Upgrade
 var spawnSpeedUpgradeLevel = 0;
 var markSpawnSpeed = 2000;
-var spawnSpeedUpgradeCost = "100 clicks";
+var spawnSpeedUpgradeCost = "100 points";
 
 const VirtualList = () => {
   const [list, setlist] = useState([]);
@@ -80,7 +89,7 @@ const VirtualList = () => {
       case 0:
         if(spawnSpeedUpgradeLevel < 5 && pointsAmt >= 100){
           markSpawnSpeed = 2000;
-          spawnSpeedUpgradeCost = "250 clicks";
+          spawnSpeedUpgradeCost = "250 points";
           spawnSpeedUpgradeLevel = spawnSpeedUpgradeLevel + 1;
           console.log("markSpawnSpeed: ", markSpawnSpeed);
           setClickCount(clickCount - 100);
@@ -92,7 +101,7 @@ const VirtualList = () => {
       case 1:
         if(spawnSpeedUpgradeLevel < 5 && pointsAmt >= 250){
           markSpawnSpeed = 1500;
-          spawnSpeedUpgradeCost = "500 clicks";
+          spawnSpeedUpgradeCost = "500 points";
           spawnSpeedUpgradeLevel = spawnSpeedUpgradeLevel + 1;
           console.log("markSpawnSpeed: ", markSpawnSpeed);
           setClickCount(clickCount - 250);
@@ -104,7 +113,7 @@ const VirtualList = () => {
       case 2:
         if(spawnSpeedUpgradeLevel < 5 && pointsAmt >= 500){
           markSpawnSpeed = 1000;
-          spawnSpeedUpgradeCost = "750 clicks";
+          spawnSpeedUpgradeCost = "750 points";
           spawnSpeedUpgradeLevel = spawnSpeedUpgradeLevel + 1;
           console.log("markSpawnSpeed: ", markSpawnSpeed);
           setClickCount(clickCount - 500);
@@ -116,7 +125,7 @@ const VirtualList = () => {
       case 3:
         if(spawnSpeedUpgradeLevel < 5 && pointsAmt >= 750){
           markSpawnSpeed = 750;
-          spawnSpeedUpgradeCost = "1000 clicks";
+          spawnSpeedUpgradeCost = "1000 points";
           spawnSpeedUpgradeLevel = spawnSpeedUpgradeLevel + 1;
           console.log("markSpawnSpeed: ", markSpawnSpeed);
           setClickCount(clickCount - 750);
@@ -128,7 +137,7 @@ const VirtualList = () => {
       case 4:
         if(spawnSpeedUpgradeLevel < 5 && pointsAmt >= 1000){
           markSpawnSpeed = 300;
-          spawnSpeedUpgradeCost = "1500 clicks";
+          spawnSpeedUpgradeCost = "1500 points";
           spawnSpeedUpgradeLevel = spawnSpeedUpgradeLevel + 1;
           console.log("markSpawnSpeed: ", markSpawnSpeed);
           setClickCount(clickCount - 1000);
@@ -269,10 +278,14 @@ var mymap = (
   </MapView>
 );
 
+// <Text>Click Counter: {clickCount}</Text>
+
 //the content to be displayed on the screen
 var alist = (
+  
  <View style={styles.container}>
       {mymap}
+      <Text style={styles.counter}>Points: {clickCount}</Text>
       <View style={styles.rowblock}>
         <View style={styles.buttonContainer}>
           {levels.map((level, index) => (
@@ -284,7 +297,6 @@ var alist = (
           ))}
       </View>
     </View>
-    <Text>Click Counter: {clickCount}</Text>
         <View style={styles.rowblock}>
         <View style={styles.buttonContainer}>
            <Text>Spawn Speed Upgrade Level: {spawnSpeedUpgradeLevel}</Text>
