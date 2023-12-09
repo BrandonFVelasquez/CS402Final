@@ -90,6 +90,10 @@ const VirtualList = () => {
   const removeMarker = (markerKey) => {
     setmarkers((prevMarkers) => {
       const updatedMarkers = prevMarkers.filter((marker) => marker.key != markerKey);
+
+        // Increment the click counter after removing the marker
+        incrementClickCounter();
+      
       return updatedMarkers;
     });
   };
