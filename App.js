@@ -269,7 +269,7 @@ var mymap = (
   </MapView>
 );
 
-//the content to be displayed on the screen when the screen is in portrait mode
+//the content to be displayed on the screen
 var alist = (
  <View style={styles.container}>
       {mymap}
@@ -285,7 +285,6 @@ var alist = (
       </View>
     </View>
     <Text>Click Counter: {clickCount}</Text>
-
         <View style={styles.rowblock}>
         <View style={styles.buttonContainer}>
            <Text>Spawn Speed Upgrade Level: {spawnSpeedUpgradeLevel}</Text>
@@ -298,7 +297,6 @@ var alist = (
             />
       </View>
     </View>
-
     <VirtualizedList
       style={styles.list}
       data={[]}
