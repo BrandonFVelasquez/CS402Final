@@ -81,7 +81,7 @@ var spawnSpeedUpgradeCost = "100 points";
 //vars for Points Multiplier Upgrade
 var pointsMultiplierUpgradeLevel = 0;
 var multiplier = 1;
-var pointsMultiplierUpgradeCost = "100 points"
+var pointsMultiplierUpgradeCost = "100 points";
 
 const VirtualList = () => {
   const [list, setlist] = useState([]);
