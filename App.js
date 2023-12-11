@@ -78,6 +78,11 @@ var spawnSpeedUpgradeLevel = 0;
 var markSpawnSpeed = 2000;
 var spawnSpeedUpgradeCost = "100 points";
 
+//vars for Points Multiplier Upgrade
+var pointsMultiplierUpgradeLevel = 0;
+var multiplier = 1;
+var pointsMultiplierUpgradeCost = "100 points"
+
 const VirtualList = () => {
   const [list, setlist] = useState([]);
   const [markers, setmarkers] = useState([]);
@@ -86,15 +91,74 @@ const VirtualList = () => {
   const [mapIsReady, setMapIsReady] = useState(false);
   const timeoutRef = useRef(null);
 
+  //Points Multiplier Upgrade
+  function pointsMultiplierUpgrade(pointsAmt){
+    switch(pointsMultiplierUpgradeLevel){
+      case 0:
+        if(pointsAmt >= 100){
+          multiplier = 2;
+          pointsMultiplierUpgradeCost = "250 points";
+          pointsMultiplierUpgradeLevel = pointsMultiplierUpgradeLevel + 1;
+          setClickCount(clickCount - 100);
+          break;
+        }
+        break;
+      case 1:
+        if(pointsAmt >= 250){
+          multiplier = 3;
+          pointsMultiplierUpgradeCost = "500 points";
+          pointsMultiplierUpgradeLevel = pointsMultiplierUpgradeLevel + 1;
+          setClickCount(clickCount - 250);
+          break;
+        }
+        break;
+      case 2:
+        if(pointsAmt >= 500){
+          multiplier = 4;
+          pointsMultiplierUpgradeCost = "750 points";
+          pointsMultiplierUpgradeLevel = pointsMultiplierUpgradeLevel + 1;
+          setClickCount(clickCount - 500);
+          break;
+        }
+        break;
+      case 3:
+        if(pointsAmt >= 750){
+          multiplier = 5;
+          pointsMultiplierUpgradeCost = "1000 points";
+          pointsMultiplierUpgradeLevel = pointsMultiplierUpgradeLevel + 1;
+          setClickCount(clickCount - 750);
+          break;
+        }
+        break;
+      case 4:
+        if(pointsAmt >= 1000){
+          multiplier = 6;
+          pointsMultiplierUpgradeCost = "1500 points";
+          pointsMultiplierUpgradeLevel = pointsMultiplierUpgradeLevel + 1;
+          setClickCount(clickCount - 1000);
+          break;
+        }
+        break;
+      default:
+        if(pointsMultiplierUpgradeLevel < 6 && pointsAmt >= 1500){
+          multiplier = 7;
+          pointsMultiplierUpgradeCost = "Fully Upgraded";
+          pointsMultiplierUpgradeLevel = pointsMultiplierUpgradeLevel + 1;
+          setClickCount(clickCount - 1500);
+          break;
+        }
+        break;
+    }
+  }
+
   //Spawn Speed Upgrade
   function spawnSpeedUpgrade(pointsAmt){
     switch(spawnSpeedUpgradeLevel) {
       case 0:
-        if(spawnSpeedUpgradeLevel < 5 && pointsAmt >= 100){
-          markSpawnSpeed = 2000;
+        if(pointsAmt >= 100){
+          markSpawnSpeed = 1750;
           spawnSpeedUpgradeCost = "250 points";
           spawnSpeedUpgradeLevel = spawnSpeedUpgradeLevel + 1;
-          console.log("markSpawnSpeed: ", markSpawnSpeed);
           setClickCount(clickCount - 100);
           return 2000;
         }
@@ -102,11 +166,10 @@ const VirtualList = () => {
           return;
         }
       case 1:
-        if(spawnSpeedUpgradeLevel < 5 && pointsAmt >= 250){
+        if(pointsAmt >= 250){
           markSpawnSpeed = 1500;
           spawnSpeedUpgradeCost = "500 points";
           spawnSpeedUpgradeLevel = spawnSpeedUpgradeLevel + 1;
-          console.log("markSpawnSpeed: ", markSpawnSpeed);
           setClickCount(clickCount - 250);
           return 1500;
         }
@@ -114,11 +177,10 @@ const VirtualList = () => {
           return;
         }
       case 2:
-        if(spawnSpeedUpgradeLevel < 5 && pointsAmt >= 500){
+        if(pointsAmt >= 500){
           markSpawnSpeed = 1000;
           spawnSpeedUpgradeCost = "750 points";
           spawnSpeedUpgradeLevel = spawnSpeedUpgradeLevel + 1;
-          console.log("markSpawnSpeed: ", markSpawnSpeed);
           setClickCount(clickCount - 500);
           return 1000;
         }
@@ -126,11 +188,10 @@ const VirtualList = () => {
           return;
         }
       case 3:
-        if(spawnSpeedUpgradeLevel < 5 && pointsAmt >= 750){
+        if(pointsAmt >= 750){
           markSpawnSpeed = 750;
           spawnSpeedUpgradeCost = "1000 points";
           spawnSpeedUpgradeLevel = spawnSpeedUpgradeLevel + 1;
-          console.log("markSpawnSpeed: ", markSpawnSpeed);
           setClickCount(clickCount - 750);
           return 750;
         }
@@ -138,11 +199,10 @@ const VirtualList = () => {
           return;
         }
       case 4:
-        if(spawnSpeedUpgradeLevel < 5 && pointsAmt >= 1000){
+        if(pointsAmt >= 1000){
           markSpawnSpeed = 300;
           spawnSpeedUpgradeCost = "1500 points";
           spawnSpeedUpgradeLevel = spawnSpeedUpgradeLevel + 1;
-          console.log("markSpawnSpeed: ", markSpawnSpeed);
           setClickCount(clickCount - 1000);
           return 300;
         }
@@ -150,10 +210,10 @@ const VirtualList = () => {
           return;
         }
       default:
-        if(spawnSpeedUpgradeLevel < 5 && pointsAmt >= 1500){
+        if(spawnSpeedUpgradeLevel < 6 && pointsAmt >= 1500){
           markSpawnSpeed = 50;
           spawnSpeedUpgradeCost = "Fully Upgraded";
-          console.log("markSpawnSpeed(fully): ", markSpawnSpeed);
+          spawnSpeedUpgradeLevel = spawnSpeedUpgradeLevel + 1;
           setClickCount(clickCount - 1500);
           return 50;
         }
@@ -217,7 +277,7 @@ const VirtualList = () => {
   }
   
   const incrementClickCounter = () => {
-    setClickCount((previous) => (previous + 1));
+    setClickCount((previous) => (previous + (1 * multiplier)));
     //We may need to add more logic for the clicker
   };
 
@@ -309,6 +369,19 @@ var alist = (
             />
       </View>
     </View>
+    
+      <View style={styles.rowblock}>
+      <Text style={{fontWeight: 'bold'}}>POINTS MULTIPLIER UPGRADE</Text>
+      <View style={styles.upgradeContainer}>
+        <Text> Level: {pointsMultiplierUpgradeLevel}</Text>
+        <Text> Upgrade for: {pointsMultiplierUpgradeCost}</Text>
+        <Button
+          title="UPGRADE"
+          onPress={() => pointsMultiplierUpgrade(clickCount)}
+        />
+      </View>
+    </View>
+
     <VirtualizedList
       style={styles.list}
       data={[]}
