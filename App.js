@@ -381,19 +381,19 @@ function startAutoRemoveMarkers() {
           return 0;
         case 'Berlin':
           if(unlockedLevels[1]) return 0;
-          return 1001;
+          return 11;
         case 'Paris':
           if(unlockedLevels[2]) return 0;
-          return 10002;
+          return 102;
         case 'Tokyo':
           if(unlockedLevels[3]) return 0;
-          return 100003;
+          return 1003;
         case 'Istanbul':
           if(unlockedLevels[4]) return 0;
-          return 1000004;
+          return 10004;
         case 'NYC':
           if(unlockedLevels[5]) return 0;
-          return 1000000005;
+          return 1000005;
         default:
           return 0;
       }
