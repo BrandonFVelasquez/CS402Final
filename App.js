@@ -17,7 +17,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     alignItems: 'center',
-    paddingTop: 50,
+    paddingTop: 30,
   },
   list: {
     flex: 20,
@@ -31,7 +31,8 @@ const styles = StyleSheet.create({
     borderWidth: 2.5,
     alignItems: 'center',
     alignContent: 'center',
-    padding: 20
+    paddingLeft: 20,
+    paddingRight: 20
   },
   rowblock: {
     flex: 0,
@@ -45,7 +46,7 @@ const styles = StyleSheet.create({
     width: '100%',
     flexDirection: 'row',
     alignItems: 'center',
-    borderWidth: 5,
+    borderWidth: 0,
     padding: 0,
     paddingTop: 0,
   },
