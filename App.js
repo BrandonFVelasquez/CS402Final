@@ -25,7 +25,7 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   counter: {
-    fontSize: '25px',
+    fontSize: 25,
     fontWeight: 'bold',
     color: 'black',
     borderWidth: 2.5,
