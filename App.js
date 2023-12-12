@@ -86,8 +86,9 @@ var pointsMultiplierUpgradeCost = "50 points";
 
 // Power-up vars
 var autoRemoveMarkersUpgradeLevel = 0;
-var autoRemoveMarkersInterval = 30000000; // Initial interval is 30 seconds
-var autoRemoveMarkersUpgradeCost = "500 points";
+var autoRemoveMarkersInterval = 30000000; // Initial interval is 30000 seconds
+var autoRemoveMarkersUpgradeCost = "250 points";
+var autoRemover = 0;
 
 var unlockedLevels = [0,0,0,0,0,0]
 
@@ -244,19 +245,19 @@ const VirtualList = () => {
 function autoRemoveMarkersUpgrade(pointsAmt) {
   switch (autoRemoveMarkersUpgradeLevel) {
     case 0:
-      if (pointsAmt >= 500) {
-        autoRemoveMarkersInterval = 20000; // Reduce interval to 20 seconds
+      if (pointsAmt >= 250) {
+        autoRemoveMarkersInterval = 3000; // Reduce interval to 3 seconds
         autoRemoveMarkersUpgradeCost = "1000 points";
         autoRemoveMarkersUpgradeLevel += 1;
-        setClickCount((prev) => prev - 500);
+        setClickCount((prev) => prev - 250);
         startAutoRemoveMarkers();
         break;
       }
       break;
     case 1:
       if (pointsAmt >= 1000) {
-        autoRemoveMarkersInterval = 10000; // Reduce interval to 10 seconds
-        autoRemoveMarkersUpgradeCost = "5000 points";
+        autoRemoveMarkersInterval = 2000; // Reduce interval to 2 seconds
+        autoRemoveMarkersUpgradeCost = "2500 points";
         autoRemoveMarkersUpgradeLevel += 1;
         setClickCount((prev) => prev - 1000);
         startAutoRemoveMarkers();
@@ -264,21 +265,21 @@ function autoRemoveMarkersUpgrade(pointsAmt) {
       }
       break; 
     case 2:
-      if (pointsAmt >= 5000) {
-        autoRemoveMarkersInterval = 5000; // Reduce interval to 5 seconds
-        autoRemoveMarkersUpgradeCost = "20000 points";
+      if (pointsAmt >= 2500) {
+        autoRemoveMarkersInterval = 1000; // Reduce interval to 1 seconds
+        autoRemoveMarkersUpgradeCost = "10000 points";
         autoRemoveMarkersUpgradeLevel += 1;
-        setClickCount((prev) => prev - 5000);
+        setClickCount((prev) => prev - 2500);
         startAutoRemoveMarkers();
         break;
       }
       break;
     case 3:
-      if (pointsAmt >= 20000) {
-        autoRemoveMarkersInterval = 2500; // Reduce interval to 2.5 seconds
-        autoRemoveMarkersUpgradeCost = "Max";
+      if (pointsAmt >= 10000) {
+        autoRemoveMarkersInterval = 500; // Reduce interval to 0.5 seconds
+        autoRemoveMarkersUpgradeCost = "Fully Upgraded";
         autoRemoveMarkersUpgradeLevel += 1;
-        setClickCount((prev) => prev - 20000);
+        setClickCount((prev) => prev - 10000);
         startAutoRemoveMarkers();
         break;
       }
@@ -290,10 +291,11 @@ function autoRemoveMarkersUpgrade(pointsAmt) {
 
 // Function to start auto-remove markers based on the specified interval
 function startAutoRemoveMarkers() {
-  setInterval(() => {
+  if(autoRemover !== 0) { clearInterval(autoRemover); autoRemover = 0; }
+  autoRemover = setInterval(() => {
     // Code to automatically remove markers
-    setmarkers((prevMarkers) => {
-removeMarker();
+      setmarkers((prevMarkers) => {
+      removeMarker();
       const updatedMarkers = prevMarkers.slice(1);
       return updatedMarkers;
     });
@@ -345,7 +347,7 @@ removeMarker();
     markLat = Math.random()*0.08 + lat - 0.05;
     markLong = Math.random()*0.08 + long - 0.05;
     let mark = createMarker(markLat, markLong);
-    setmarkers((prevMarkers) => prevMarkers.length >= 100 ? prevMarkers : [mark, ...prevMarkers]);
+    setmarkers((prevMarkers) => prevMarkers.length >= 25 ? prevMarkers : [mark, ...prevMarkers]);
   }
 
   function gmark() {
