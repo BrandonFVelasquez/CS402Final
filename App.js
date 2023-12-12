@@ -83,6 +83,11 @@ var pointsMultiplierUpgradeLevel = 0;
 var multiplier = 1;
 var pointsMultiplierUpgradeCost = "100 points";
 
+// Power-up vars
+var autoRemoveMarkersUpgradeLevel = 0;
+var autoRemoveMarkersInterval = 30000000; // Initial interval is 30 seconds
+var autoRemoveMarkersUpgradeCost = "500 points";
+
 const VirtualList = () => {
   const [list, setlist] = useState([]);
   const [markers, setmarkers] = useState([]);
@@ -223,6 +228,66 @@ const VirtualList = () => {
     }
   }
 
+// Auto Remove Markers Upgrade
+function autoRemoveMarkersUpgrade(pointsAmt) {
+  switch (autoRemoveMarkersUpgradeLevel) {
+    case 0:
+      if (pointsAmt >= 500) {
+        autoRemoveMarkersInterval = 20000; // Reduce interval to 20 seconds
+        autoRemoveMarkersUpgradeCost = "1000 points";
+        autoRemoveMarkersUpgradeLevel += 1;
+        setClickCount((prev) => prev - 500);
+        startAutoRemoveMarkers();
+        break;
+      }
+      break;
+    case 1:
+      if (pointsAmt >= 1000) {
+        autoRemoveMarkersInterval = 10000; // Reduce interval to 10 seconds
+        autoRemoveMarkersUpgradeCost = "5000 points";
+        autoRemoveMarkersUpgradeLevel += 1;
+        setClickCount((prev) => prev - 1000);
+        startAutoRemoveMarkers();
+        break;
+      }
+      break; 
+    case 2:
+      if (pointsAmt >= 5000) {
+        autoRemoveMarkersInterval = 5000; // Reduce interval to 5 seconds
+        autoRemoveMarkersUpgradeCost = "20000 points";
+        autoRemoveMarkersUpgradeLevel += 1;
+        setClickCount((prev) => prev - 5000);
+        startAutoRemoveMarkers();
+        break;
+      }
+      break;
+    case 3:
+      if (pointsAmt >= 20000) {
+        autoRemoveMarkersInterval = 2500; // Reduce interval to 2.5 seconds
+        autoRemoveMarkersUpgradeCost = "Max";
+        autoRemoveMarkersUpgradeLevel += 1;
+        setClickCount((prev) => prev - 20000);
+        startAutoRemoveMarkers();
+        break;
+      }
+      break;
+    default:  
+        break;
+  }
+}
+
+// Function to start auto-remove markers based on the specified interval
+function startAutoRemoveMarkers() {
+  setInterval(() => {
+    // Code to automatically remove markers
+    setmarkers((prevMarkers) => {
+removeMarker();
+      const updatedMarkers = prevMarkers.slice(1);
+      return updatedMarkers;
+    });
+  }, autoRemoveMarkersInterval);
+}
+
   useEffect(() => {
 
     if(mapIsReady) {
@@ -295,15 +360,50 @@ const VirtualList = () => {
     );
   };
 
-    const navigateToLocation = async (location) => {
+      const getPointsNeededToUnlock = (levelName) => {
+      switch (levelName) {
+        case 'Boise':
+          return 0;
+        case 'Berlin':
+          return 1000;
+        case 'Paris':
+          return 10000;
+        case 'Tokyo':
+          return 100000;
+        case 'Istanbul':
+          return 1000000;
+        case 'NYC':
+          return 1000000000;
+        default:
+          return 0;
+      }
+    };
+
+     // Start auto-remove markers if the auto-remove markers upgrade is active
+  if (autoRemoveMarkersUpgradeLevel > 0) {
+    startAutoRemoveMarkers();
+  }
+
+
+  const navigateToLocation = async (location, levelName) => {
     try {
-      mapref.current.animateToRegion({
-        latitude: location.latitude,
-        longitude: location.longitude,
-        latitudeDelta: 0.1,
-        longitudeDelta: 0.1,
-      });
-      setLevelPos({latitude: location.latitude, longitude: location.longitude});   
+      const pointsNeeded = getPointsNeededToUnlock(levelName);
+
+      // Check if the user has enough points to unlock the level
+      if (clickCount >= pointsNeeded) {
+        mapref.current.animateToRegion({
+          latitude: location.latitude,
+          longitude: location.longitude,
+          latitudeDelta: 0.1,
+          longitudeDelta: 0.1,
+        });
+        setLevelPos({ latitude: location.latitude, longitude: location.longitude });
+        // Deduct points for unlocking the level
+        setClickCount((prevClickCount) => prevClickCount - pointsNeeded);
+      } else {
+        // Display a message or take appropriate action when the user doesn't have enough points
+        console.log(`You need ${pointsNeeded} points to unlock ${levelName}.`);
+      }
     } catch (error) {
       console.warn('Error navigating to location:', error);
     }
@@ -314,6 +414,8 @@ const VirtualList = () => {
   { name: 'Berlin', location: {latitude: 52.5200, longitude: 13.4050} }, // Germany
   { name: 'Paris', location: {latitude: 48.8566, longitude: 2.3522} }, // France
   { name: 'Tokyo', location: {latitude: 35.6764, longitude: 139.6500} }, // Tokyo
+  { name: 'Istanbul', location: {latitude: 41.0082, longitude: 28.9784} }, // Turkey
+  { name: 'NYC', location: {latitude: 40.7128, longitude: 74.0060} }, // New York City
 ];
 
 const mapref = React.createRef();
@@ -353,7 +455,8 @@ var alist = (
             <Button
               key={index}
               title={level.name}
-              onPress={() => navigateToLocation(level.location)}
+              onPress={() => navigateToLocation(level.location, level.name)}
+              disabled={clickCount < getPointsNeededToUnlock(level.name)}
             />
           ))}
       </View>
@@ -369,7 +472,6 @@ var alist = (
             />
       </View>
     </View>
-    
       <View style={styles.rowblock}>
       <Text style={{fontWeight: 'bold'}}>POINTS MULTIPLIER UPGRADE</Text>
       <View style={styles.upgradeContainer}>
@@ -381,6 +483,17 @@ var alist = (
         />
       </View>
     </View>
+  <View style={styles.rowblock}>
+    <Text style={{ fontWeight: 'bold' }}>AUTO REMOVE MARKERS UPGRADE</Text>
+    <View style={styles.upgradeContainer}>
+      <Text> Level: {autoRemoveMarkersUpgradeLevel}</Text>
+      <Text> Upgrade for: {autoRemoveMarkersUpgradeCost}</Text>
+      <Button
+        title="UPGRADE"
+        onPress={() => autoRemoveMarkersUpgrade(clickCount)}
+      />
+  </View>
+</View>
 
     <VirtualizedList
       style={styles.list}
