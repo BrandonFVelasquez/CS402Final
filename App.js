@@ -77,17 +77,19 @@ async function lockOrientation() {
 // vars for Spawn Speed Upgrade
 var spawnSpeedUpgradeLevel = 0;
 var markSpawnSpeed = 2000;
-var spawnSpeedUpgradeCost = "100 points";
+var spawnSpeedUpgradeCost = "10 points";
 
 //vars for Points Multiplier Upgrade
 var pointsMultiplierUpgradeLevel = 0;
 var multiplier = 1;
-var pointsMultiplierUpgradeCost = "100 points";
+var pointsMultiplierUpgradeCost = "50 points";
 
 // Power-up vars
 var autoRemoveMarkersUpgradeLevel = 0;
 var autoRemoveMarkersInterval = 30000000; // Initial interval is 30 seconds
 var autoRemoveMarkersUpgradeCost = "500 points";
+
+var unlockedLevels = [0,0,0,0,0,0]
 
 const VirtualList = () => {
   const [list, setlist] = useState([]);
@@ -101,44 +103,53 @@ const VirtualList = () => {
   function pointsMultiplierUpgrade(pointsAmt){
     switch(pointsMultiplierUpgradeLevel){
       case 0:
-        if(pointsAmt >= 100){
+        if(pointsAmt >= 50){
           multiplier = 2;
+          pointsMultiplierUpgradeCost = "100 points";
+          pointsMultiplierUpgradeLevel = pointsMultiplierUpgradeLevel + 1;
+          setClickCount(clickCount - 50);
+          break;
+        }
+        break;
+      case 1:
+        if(pointsAmt >= 100){
+          multiplier = 3;
           pointsMultiplierUpgradeCost = "250 points";
           pointsMultiplierUpgradeLevel = pointsMultiplierUpgradeLevel + 1;
           setClickCount(clickCount - 100);
           break;
         }
         break;
-      case 1:
+      case 2:
         if(pointsAmt >= 250){
-          multiplier = 3;
+          multiplier = 4;
           pointsMultiplierUpgradeCost = "500 points";
           pointsMultiplierUpgradeLevel = pointsMultiplierUpgradeLevel + 1;
           setClickCount(clickCount - 250);
           break;
         }
         break;
-      case 2:
+      case 3:
         if(pointsAmt >= 500){
-          multiplier = 4;
+          multiplier = 5;
           pointsMultiplierUpgradeCost = "750 points";
           pointsMultiplierUpgradeLevel = pointsMultiplierUpgradeLevel + 1;
           setClickCount(clickCount - 500);
           break;
         }
         break;
-      case 3:
+      case 4:
         if(pointsAmt >= 750){
-          multiplier = 5;
+          multiplier = 6;
           pointsMultiplierUpgradeCost = "1000 points";
           pointsMultiplierUpgradeLevel = pointsMultiplierUpgradeLevel + 1;
           setClickCount(clickCount - 750);
           break;
         }
         break;
-      case 4:
+      case 5:
         if(pointsAmt >= 1000){
-          multiplier = 6;
+          multiplier = 7;
           pointsMultiplierUpgradeCost = "1500 points";
           pointsMultiplierUpgradeLevel = pointsMultiplierUpgradeLevel + 1;
           setClickCount(clickCount - 1000);
@@ -146,8 +157,8 @@ const VirtualList = () => {
         }
         break;
       default:
-        if(pointsMultiplierUpgradeLevel < 6 && pointsAmt >= 1500){
-          multiplier = 7;
+        if(pointsMultiplierUpgradeLevel < 7 && pointsAmt >= 1500){
+          multiplier = 8;
           pointsMultiplierUpgradeCost = "Fully Upgraded";
           pointsMultiplierUpgradeLevel = pointsMultiplierUpgradeLevel + 1;
           setClickCount(clickCount - 1500);
@@ -161,44 +172,44 @@ const VirtualList = () => {
   function spawnSpeedUpgrade(pointsAmt){
     switch(spawnSpeedUpgradeLevel) {
       case 0:
-        if(pointsAmt >= 100){
+        if(pointsAmt >= 10){
           markSpawnSpeed = 1750;
-          spawnSpeedUpgradeCost = "250 points";
+          spawnSpeedUpgradeCost = "25 points";
           spawnSpeedUpgradeLevel = spawnSpeedUpgradeLevel + 1;
-          setClickCount(clickCount - 100);
+          setClickCount(clickCount - 10);
           return 2000;
         }
         else{
           return;
         }
       case 1:
-        if(pointsAmt >= 250){
+        if(pointsAmt >= 25){
           markSpawnSpeed = 1500;
-          spawnSpeedUpgradeCost = "500 points";
+          spawnSpeedUpgradeCost = "50 points";
           spawnSpeedUpgradeLevel = spawnSpeedUpgradeLevel + 1;
-          setClickCount(clickCount - 250);
+          setClickCount(clickCount - 25);
           return 1500;
         }
         else{
           return;
         }
       case 2:
-        if(pointsAmt >= 500){
-          markSpawnSpeed = 1000;
-          spawnSpeedUpgradeCost = "750 points";
+        if(pointsAmt >= 50){
+          markSpawnSpeed = 1250;
+          spawnSpeedUpgradeCost = "100 points";
           spawnSpeedUpgradeLevel = spawnSpeedUpgradeLevel + 1;
-          setClickCount(clickCount - 500);
+          setClickCount(clickCount - 50);
           return 1000;
         }
         else{
           return;
         }
       case 3:
-        if(pointsAmt >= 750){
-          markSpawnSpeed = 750;
+        if(pointsAmt >= 100){
+          markSpawnSpeed = 1000;
           spawnSpeedUpgradeCost = "1000 points";
           spawnSpeedUpgradeLevel = spawnSpeedUpgradeLevel + 1;
-          setClickCount(clickCount - 750);
+          setClickCount(clickCount - 100);
           return 750;
         }
         else{
@@ -334,7 +345,7 @@ removeMarker();
     markLat = Math.random()*0.08 + lat - 0.05;
     markLong = Math.random()*0.08 + long - 0.05;
     let mark = createMarker(markLat, markLong);
-    setmarkers((prevMarkers) => [mark, ...prevMarkers]);
+    setmarkers((prevMarkers) => prevMarkers.length >= 100 ? prevMarkers : [mark, ...prevMarkers]);
   }
 
   function gmark() {
@@ -364,17 +375,23 @@ removeMarker();
       const getPointsNeededToUnlock = (levelName) => {
       switch (levelName) {
         case 'Boise':
+          if(unlockedLevels[0]) return 0;
           return 0;
         case 'Berlin':
-          return 1000;
+          if(unlockedLevels[1]) return 0;
+          return 1001;
         case 'Paris':
-          return 10000;
+          if(unlockedLevels[2]) return 0;
+          return 10002;
         case 'Tokyo':
-          return 100000;
+          if(unlockedLevels[3]) return 0;
+          return 100003;
         case 'Istanbul':
-          return 1000000;
+          if(unlockedLevels[4]) return 0;
+          return 1000004;
         case 'NYC':
-          return 1000000000;
+          if(unlockedLevels[5]) return 0;
+          return 1000000005;
         default:
           return 0;
       }
@@ -389,9 +406,11 @@ removeMarker();
   const navigateToLocation = async (location, levelName) => {
     try {
       const pointsNeeded = getPointsNeededToUnlock(levelName);
+      const levelNumber = pointsNeeded % 10;
 
       // Check if the user has enough points to unlock the level
-      if (clickCount >= pointsNeeded) {
+      if (clickCount >= (pointsNeeded - levelNumber)) {
+        unlockedLevels[levelNumber] = 1;
         mapref.current.animateToRegion({
           latitude: location.latitude,
           longitude: location.longitude,
@@ -400,10 +419,10 @@ removeMarker();
         });
         setLevelPos({ latitude: location.latitude, longitude: location.longitude });
         // Deduct points for unlocking the level
-        setClickCount((prevClickCount) => prevClickCount - pointsNeeded);
+        setClickCount((prevClickCount) => prevClickCount - pointsNeeded + levelNumber);
       } else {
         // Display a message or take appropriate action when the user doesn't have enough points
-        console.log(`You need ${pointsNeeded} points to unlock ${levelName}.`);
+        console.log(`You need ${pointsNeeded - levelNumber} points to unlock ${levelName}.`);
       }
     } catch (error) {
       console.warn('Error navigating to location:', error);
@@ -457,7 +476,7 @@ var alist = (
               key={index}
               title={level.name}
               onPress={() => navigateToLocation(level.location, level.name)}
-              disabled={clickCount < getPointsNeededToUnlock(level.name)}
+              disabled={clickCount < getPointsNeededToUnlock(level.name) - index}
             />
           ))}
       </View>
